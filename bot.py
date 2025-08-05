@@ -1,11 +1,9 @@
-import os
 import requests
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
-from datetime import datetime
+from telegram.ext import Application, MessageHandler, ContextTypes, filters
 
-# Get the bot token directly from the environment (Render/Railway/your computer's ENV)
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Make sure this is set in your platform/environment
+# Your Telegram bot token (hardcoded)
+BOT_TOKEN = "8221932887:AAGroVGwlkGyyuem7kp91tI53OlBDjobz_Q"
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
@@ -17,11 +15,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Downloading your video...")
 
     try:
-        # Follow redirect if it's a short link (e.g. vt.tiktok.com)
+        # Handle short links like vt.tiktok.com
         response = requests.get(text, allow_redirects=True)
         real_url = response.url
 
-        # Use TikWM API to fetch video info
+        # Use TikWM API to get download link
         api_url = f"https://tikwm.com/api/?url={real_url}"
         api_response = requests.get(api_url).json()
 
@@ -35,9 +33,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Error: {str(e)}")
 
-# Start the bot
-app = ApplicationBuilder().token(BOT_TOKEN).build()
-app.add_handler(MessageHandler(filters.TEXT, handle_message))
+if __name__ == "__main__":
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-print("Bot is running...")
-app.run_polling()
+    print("Bot is running...")
+    app.run_polling()
