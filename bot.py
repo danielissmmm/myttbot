@@ -1,13 +1,11 @@
 import os
 import requests
-from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 from datetime import datetime
 
-# Load the .env file
-load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Gets the token from .env
+# Get the bot token directly from the environment (Render/Railway/your computer's ENV)
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # Make sure this is set in your platform/environment
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
